@@ -121,7 +121,7 @@ export const useUserStore = defineStore("user", {
       try {
         // const updatedUser = { ...users, photo: users.foto_url };
 
-        console.log(users);
+        // console.log(users);
 
         await axios.put(`${this.apiUrl}/api/v1/users`, users, {
           headers: {
