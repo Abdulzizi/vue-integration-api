@@ -168,7 +168,6 @@
                             </BTableSimple>
                         </div>
 
-
                         <Pagination :currentPage="userStore.current" :totalRows="userStore.totalData"
                             :perPage="userStore.perpage" @update:currentPage="updatePage" />
                     </BCardBody>
@@ -334,7 +333,6 @@ const deleteUser = async (id) => {
         }
     }
 };
-
 
 onMounted(async () => {
     await getUsers();
