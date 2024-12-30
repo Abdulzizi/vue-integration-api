@@ -185,7 +185,6 @@ import Pagination from "@/components/widgets/pagination";
 import { useUserStore } from "@/state/pinia";
 import { useProgress } from "@/helpers/progress"; // Import custom progress function
 
-
 const { startProgress, finishProgress, failProgress } = useProgress();
 import ImageCropper from "@/components/widgets/cropper";
 import {

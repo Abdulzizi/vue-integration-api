@@ -99,6 +99,7 @@ export default [
   {
     path: "/customer",
     name: "customer",
+    meta: { title: "Master Customer", authRequired: false },
     component: () => import("../views/customer"),
   },
   // Redirect any unmatched routes to the 404 page. This may
