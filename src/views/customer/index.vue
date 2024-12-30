@@ -5,6 +5,5 @@
 </template>
 
 <script setup>
-const test;
 
 </script>
