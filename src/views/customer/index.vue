@@ -199,6 +199,7 @@ import {
 } from "@/helpers/alert.js";
 import { BCard, BCol, BRow } from "bootstrap-vue-next";
 
+
 const customerStore = useCustomerStore();
 const rows = ref([]);
 const isOpenForm = ref(false);
@@ -215,7 +216,6 @@ const getCustomers = async () => {
         failProgress();
         rows.value = [];
     }
-
 }
 
 const updatePage = async (page) => {
@@ -241,6 +241,7 @@ const formModel = reactive({
     phone: "",
     email: "",
     password: "",
+    m_user_id: ""
 });
 
 
@@ -248,6 +249,8 @@ const openFormModal = (mode, id = null) => {
     isOpenForm.value = true;
     if (mode === 'edit' && id) {
         const customer = rows.value.find((customer) => customer.id === id);
+        // console.log(customer);
+
         if (customer) {
             formModel.id = customer.id;
             formModel.name = customer.name;
@@ -255,6 +258,7 @@ const openFormModal = (mode, id = null) => {
             formModel.photo = customer.photo;
             formModel.phone = customer.phone;
             formModel.email = customer.email;
+            formModel.m_user_id = customer.m_user_id;
             formModel.password = "";
             modalTitle.value = "Ubah Customer";
 
@@ -269,6 +273,7 @@ const openFormModal = (mode, id = null) => {
         formModel.phone = "";
         formModel.email = "";
         formModel.password = "";
+        formModel.m_user_id = "";
         modalTitle.value = "Add Customer";
 
         imageUrl.value = "";
