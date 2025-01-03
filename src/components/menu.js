@@ -34,6 +34,31 @@ export const menuItems = [
         link: "/customer",
         parentId: 4,
       },
+      {
+        id: 7,
+        label: "Product Category",
+        link: "/product-category",
+        parentId: 4,
+      },
+      {
+        id: 8,
+        label: "Product",
+        link: "/product",
+        parentId: 4,
+      },
+    ],
+  },
+  {
+    id: 5,
+    label: "Pembayaran",
+    icon: "bx-wallet",
+    subItems: [
+      {
+        id: 9,
+        label: "Transaksi",
+        link: "/transaksi",
+        parentId: 5,
+      },
     ],
   },
 ];

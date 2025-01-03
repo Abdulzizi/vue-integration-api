@@ -102,6 +102,30 @@ export default [
     meta: { title: "Master Customer", authRequired: false },
     component: () => import("../views/customer"),
   },
+  {
+    path: "/product-category",
+    name: "product-category",
+    meta: { title: "Master Product Category", authRequired: false },
+    component: () => import("../views/product-category"),
+  },
+  {
+    path: "/product",
+    name: "product",
+    meta: { title: "Master Product", authRequired: false },
+    component: () => import("../views/product"),
+  },
+  {
+    path: "/product-form",
+    name: "product-form",
+    meta: { title: "Master Product Form", authRequired: false },
+    component: () => import("../views/product/form.vue"),
+  },
+  {
+    path: "/transaksi",
+    name: "transaksi",
+    meta: { title: "Sale Transaksi", authRequired: false },
+    component: () => import("../views/transaksi"),
+  },
   // Redirect any unmatched routes to the 404 page. This may
   // require some server configuration to work in production:
   // https://router.vuejs.org/en/essentials/history-mode.html#example-server-configurations
