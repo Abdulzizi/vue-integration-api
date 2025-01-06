@@ -31,10 +31,17 @@ export const useProductStore = defineStore("product", {
       try {
         const url = `${this.apiUrl}/api/v1/products?page=${this.current}&per_page=${this.perpage}&name=${this.searchQuery}`;
         const res = await axios.get(url);
+
         this.products = res.data.data.list;
         this.totalData = res.data.data.meta.total;
       } catch (error) {
-        console.log(error);
+        this.response = {
+          status: error.response?.status || 500,
+          message: error.response?.data?.message || "Failed to fetch products.",
+          list: error.response?.data?.errors || [],
+        };
+
+        throw this.response;
       }
     },
 
@@ -58,7 +65,7 @@ export const useProductStore = defineStore("product", {
     async changePage(newPage) {
       this.current = newPage;
     },
-    async searchUsers(query) {
+    async searchProduct(query) {
       this.searchQuery = query;
       this.current = 1;
     },

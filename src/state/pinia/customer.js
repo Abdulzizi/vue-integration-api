@@ -25,16 +25,19 @@ export const useCustomerStore = defineStore("customer", {
   actions: {
     async getCustomers() {
       try {
-        const url = `${this.apiUrl}/api/v1/customers?page=${this.current}&per_page=${this.perPage}&name=${this.searchQuery}`;
+        const url = `${this.apiUrl}/api/v1/customers?page=${this.current}&per_page=${this.perpage}&name=${this.searchQuery}`;
         const res = await axios.get(url);
 
-        this.customers = res.data.data.list || [];
-        this.totalData = res.data.data.meta.total || 0;
+        this.customers = res.data.data.list;
+        this.totalData = res.data.data.meta.total;
       } catch (error) {
         this.response = {
-          status: error.response?.status,
-          message: error.message,
+          status: error.response?.status || 500,
+          message:
+            error.response?.data?.message || "Failed to fetch customers.",
+          list: error.response?.data?.errors || [],
         };
+        throw this.response;
       }
     },
 

@@ -3,6 +3,7 @@ import { useAuthStore } from "./pinia/auth";
 import { useUserStore } from "./pinia/user";
 import { useCustomerStore } from "./pinia/customer";
 import { useProductCategoryStore } from "./pinia/product-category";
+import { useSaleStore } from "./pinia/sale";
 import { useProductStore } from "./pinia/product";
 import { createPinia } from "pinia";
 
@@ -16,4 +17,5 @@ export {
   useCustomerStore,
   useProductCategoryStore,
   useProductStore,
+  useSaleStore,
 };
