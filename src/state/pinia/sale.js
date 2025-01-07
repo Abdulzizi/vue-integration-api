@@ -4,7 +4,7 @@ import axios from "axios";
 export const useSaleStore = defineStore("sale", {
   state: () => ({
     apiUrl: process.env.VUE_APP_APIURL,
-    saleResponse: {
+    response: {
       status: null,
       message: null,
       data: null,
@@ -22,7 +22,7 @@ export const useSaleStore = defineStore("sale", {
         const url = `${this.apiUrl}/api/v1/sales`;
         const response = await axios.post(url, orderData);
 
-        this.respnse = {
+        this.response = {
           status: response.status,
           message: response.data.message,
         };

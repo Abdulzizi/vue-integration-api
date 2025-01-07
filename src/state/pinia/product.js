@@ -66,8 +66,16 @@ export const useProductStore = defineStore("product", {
       this.current = newPage;
     },
     async searchProduct(query) {
-      this.searchQuery = query;
-      this.current = 1;
+      try {
+        // console.log("Search Query in state:", query);
+
+        this.searchQuery = query;
+        this.current = 1;
+
+        await this.getProducts();
+      } catch (error) {
+        console.error("Error Response:", error.response);
+      }
     },
 
     async addProduct(product) {

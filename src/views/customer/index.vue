@@ -224,8 +224,8 @@ const updatePage = async (page) => {
 }
 
 const searchData = async () => {
-    console.log('Search Query:', customerStore.searchQuery);
-    console.log('Current Page:', customerStore.current);
+    // console.log('Search Query:', customerStore.searchQuery);
+    // console.log('Current Page:', customerStore.current);
 
     await customerStore.searchCustomer(customerStore.searchQuery);
 }

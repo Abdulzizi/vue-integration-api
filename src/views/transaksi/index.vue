@@ -30,6 +30,9 @@
                                     <BFormInput v-model="productStore.searchQuery" placeholder="Cari Produk..."
                                         @keydown.enter="searchData" />
                                     <BInputGroupAppend>
+                                        <BButton variant="outline-primary" @click="searchData">
+                                            <i class="mdi mdi-magnify"></i>
+                                        </BButton>
                                         <BButton variant="outline-secondary" @click="clearSearchData">
                                             <i class="mdi mdi-close"></i>
                                         </BButton>
@@ -123,7 +126,7 @@ const orders = ref([]);
 
 const formModel = reactive({
     m_customer_id: "",
-    date: "",
+    // date: "",
     product_detail: []
 });
 
@@ -155,10 +158,10 @@ const getProducts = async () => {
             rowsProduct.value = [];
         }
     } catch (error) {
+        showErrorToast("Cannot get products");
+
         console.error("Error Response:", error.response);
         rowsProduct.value = [];
-
-        showErrorToast(error);
     }
 }
 
@@ -175,10 +178,9 @@ const getCustomers = async () => {
             rowsCustomer.value = [];
         }
     } catch (error) {
+        showErrorToast("Cannot get customers");
         console.error("Error Response:", error.response);
         rowsCustomer.value = [];
-
-        showErrorToast(error);
     }
 }
 
@@ -208,17 +210,30 @@ const handleOrderSubmit = async () => {
     // console.log('Order Data:', orderData);
 
     try {
+        startProgress();
         await saleStore.submitOrder(orderData);
+
         if (saleStore.response?.status === 200) {
-            // Reset form and orders
+            console.log("Status:", saleStore.response?.status);
+            finishProgress();
+            showSuccessToast('Order submitted successfully!');
+
+            // Clear form and orders
             formModel.m_customer_id = '';
             formModel.product_detail = [];
             orders.value = [];
-            showSuccessToast('Order submitted successfully!');
+            selectedCustomerName.value = '';
+
+            await getProducts();
+        } else {
+            failProgress();
+            showErrorToast(saleStore.response?.message || 'Failed to submit order.');
         }
     } catch (error) {
+        showErrorToast("Failed to submit order.");
+        failProgress();
+
         console.error('Order submit error:', error);
-        showErrorToast(error);
     }
 };
 
@@ -276,16 +291,23 @@ const updateCustomerName = () => {
 
 const searchData = async () => {
     try {
-        console.log('Search Query:', productStore.searchQuery);
+        console.log("Search query triggered:", productStore.searchQuery);
+
         await productStore.searchProduct(productStore.searchQuery);
+
+        rowsProduct.value = productStore.products || [];
+
     } catch (error) {
+        showErrorToast("Failed to search products.");
         rowsProduct.value = [];
-        showErrorToast(error);
+
     }
 };
 
-const clearSearchData = () => {
-    productStore.value.searchQuery = "";
+const clearSearchData = async () => {
+    productStore.searchQuery = "";
+
+    await getProducts();
 };
 
 
