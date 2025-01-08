@@ -61,4 +61,17 @@ export const menuItems = [
       },
     ],
   },
+  {
+    id: 6,
+    label: "Laporan",
+    icon: "bx-wallet",
+    subItems: [
+      {
+        id: 10,
+        label: "Laporan Sales",
+        link: "/report-sales",
+        parentId: 6,
+      },
+    ],
+  },
 ];

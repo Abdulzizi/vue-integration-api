@@ -100,3 +100,8 @@ File: Main Css File
 // @import "custom/rtl/text-rtl";
 // @import "custom/rtl/components-rtl";
 // @import "custom/rtl/bootstrap-rtl";
+
+// vueform
+
+@import 'bootstrap/scss/bootstrap';
+@import '@vueform/vueform/themes/bootstrap/scss/index.scss';

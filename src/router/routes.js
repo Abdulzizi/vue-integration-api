@@ -126,6 +126,12 @@ export default [
     meta: { title: "Sale Transaksi", authRequired: false },
     component: () => import("../views/transaksi"),
   },
+  {
+    path: "/report-sales",
+    name: "report-sales",
+    meta: { title: "Report Sales", authRequired: false },
+    component: () => import("../views/laporan/index.vue"),
+  },
   // Redirect any unmatched routes to the 404 page. This may
   // require some server configuration to work in production:
   // https://router.vuejs.org/en/essentials/history-mode.html#example-server-configurations
