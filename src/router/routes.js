@@ -127,9 +127,9 @@ export default [
     component: () => import("../views/transaksi"),
   },
   {
-    path: "/report-sales",
-    name: "report-sales",
-    meta: { title: "Report Sales", authRequired: false },
+    path: "/sales-report",
+    name: "sales-report",
+    meta: { title: "Sales Report", authRequired: false },
     component: () => import("../views/laporan/index.vue"),
   },
   // Redirect any unmatched routes to the 404 page. This may

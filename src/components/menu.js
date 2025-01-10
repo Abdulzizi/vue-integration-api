@@ -64,12 +64,12 @@ export const menuItems = [
   {
     id: 6,
     label: "Laporan",
-    icon: "bx-wallet",
+    icon: "bx bx-food-menu",
     subItems: [
       {
         id: 10,
         label: "Laporan Sales",
-        link: "/report-sales",
+        link: "/sales-report",
         parentId: 6,
       },
     ],

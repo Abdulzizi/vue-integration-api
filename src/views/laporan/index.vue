@@ -3,31 +3,36 @@
         <PageHeader title="Laporan Penjualan" pageTitle="Laporan" />
 
         <BRow class="mb-3">
-            <BCol md="3">
-                <BFormGroup label="Start Date" label-size="sm">
-                    <BFormInput v-model="saleStore.startDate" type="date" class="mb-2" />
-                </BFormGroup>
-                <BFormGroup label="End Date" label-size="sm">
-                    <BFormInput v-model="saleStore.endDate" type="date" />
-                </BFormGroup>
-            </BCol>
 
+            <!-- Date picker -->
             <BCol md="3">
-                <Vueform>
-                    <TagsElement v-model="selectedCustomers" :items="customers" :multiple="true" label="Pilih Pelanggan"
-                        name="customers" placeholder="Cari pelanggan" :search="true" :clearable="true" />
+                <Vueform :float-placeholders="false" v-model="selectedDates">
+                    <DatesElement mode="range" label="Pilih Tanggal" placeholder="Pilih tanggal" name="dates"
+                        @update:modelValue="(val) => { selectedDates.value = val; }" />
                 </Vueform>
-                <p v-if="selectedCustomers.length > 0">Selected Customers: {{ selectedCustomers.join(', ') }}</p>
+                <pre>{{ selectedDates }}</pre>
             </BCol>
 
             <BCol md="3">
-                <Vueform>
-                    <TagsElement name="menus" :items="menus" :multiple="true" label="Pilih Menu" placeholder="Cari menu"
-                        :search="true" :clearable="true" />
+                <!-- Customer Picker -->
+                <Vueform :float-placeholders="false" v-model="selectedCustomers">
+                    <TagsElement :items="customers" label-prop="name" value-prop="id" label="Pilih Pelanggan"
+                        placeholder="Pilih Customer" name="customers" :search="true" :clearable="true"
+                        :multiple="true" />
                 </Vueform>
             </BCol>
 
-            <BCol md="3" class="d-flex justify-content-end align-items-end gap-2">
+            <BCol md="3">
+                <!-- Menu Picker -->
+                <Vueform :float-placeholders="false" v-model="selectedMenus">
+                    <TagsElement :items="menus" label-prop="name" value-prop="id" label="Pilih Menu"
+                        placeholder="Pilih Menu" name="menus" :search="true" :clearable="true" :multiple="true" />
+                </Vueform>
+            </BCol>
+
+
+            <!-- Export button -->
+            <BCol md="3" class="d-flex justify-content-end align-items-end gap-2 mt-4 md:mt-0">
                 <BButton variant="danger">
                     <i class="mdi mdi-file-pdf" />
                     Export PDF
@@ -39,6 +44,7 @@
             </BCol>
         </BRow>
 
+        <!-- Table report -->
         <BCard>
             <BTableSimple>
                 <BThead>
@@ -47,75 +53,158 @@
                         <BTh>Customer</BTh>
                         <BTh>Tanggal</BTh>
                         <BTh>Menu</BTh>
+
+                        <BTh>Jumlah</BTh>
+                        <BTh>Harga</BTh>
+
                         <BTh>Total</BTh>
                     </BTr>
                 </BThead>
                 <BTbody>
-                    <BTr v-for="(sale) in filteredRows" :key="sale.id">
-                        <BTd>{{ sale.id }}</BTd>
+
+                    <BTr v-for="(sale, index) in rows" :key="sale.id">
+                        <BTd>{{ index + 1 }}</BTd>
                         <BTd>{{ sale.customer }}</BTd>
                         <BTd>{{ sale.tanggal }}</BTd>
                         <BTd>{{ sale.menu }}</BTd>
+
+                        <BTd>{{ sale.quantity }}</BTd>
+                        <BTd>{{ sale.price }}</BTd>
+
                         <BTd>{{ sale.total }}</BTd>
                     </BTr>
                 </BTbody>
             </BTableSimple>
 
-            <Pagination :currentPage="saleStore.current" :totalRows="saleStore.totalData" :perPage="saleStore.perPage"
+            <!-- Pagination -->
+            <Pagination :currentPage="saleStore.current" :totalRows="rowLength" :perPage="saleStore.perPage"
                 @update:currentPage="updatePage" />
         </BCard>
     </Layouts>
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue'
-import { useSaleStore } from '@/state/pinia'
+import { onMounted, ref, computed, watch } from 'vue';
+import { useSaleStore, useCustomerStore, useProductStore } from '@/state/pinia';
 
-import PageHeader from '../../components/page-header.vue'
-import Pagination from '../../components/widgets/pagination.vue'
-import Layouts from '../../layouts/main.vue'
+import { useProgress } from "@/helpers/progress";
+import PageHeader from '../../components/page-header.vue';
+import Pagination from '../../components/widgets/pagination.vue';
+import Layouts from '../../layouts/main.vue';
+
+const { startProgress, finishProgress, failProgress } = useProgress();
 
 const saleStore = useSaleStore();
-const selectedCustomers = ref([])
+const productStore = useProductStore();
+const customerStore = useCustomerStore();
 
-const rows = ref([
-    { id: 1, customer: "Bintang Ramadhan", tanggal: "10 Juni 2022", menu: "Rice Bowl BBW", total: "15.000" },
-    { id: 2, customer: "John Doe", tanggal: "15 Juni 2022", menu: "Lalapan Usus", total: "10.000" },
-    { id: 3, customer: "Jane Smith", tanggal: "20 Juni 2022", menu: "Tahu Bakso", total: "25.000" },
-    { id: 4, customer: "Mike Johnson", tanggal: "25 Juni 2022", menu: "Bakmie Goreng", total: "20.000" },
-])
+const rowLength = computed(() => rows.value.length);
 
-const customers = ref([
-    { value: 1, label: 'John Doe' },
-    { value: 2, label: 'Jane Smith' },
-    { value: 3, label: 'Mike Johnson' },
-    { value: 4, label: 'Sarah Williams' }
-])
+const selectedCustomers = ref([]);
+const selectedMenus = ref([]);
+const selectedDates = ref([]);
 
-const menus = [
-    'Tempe Mendoan',
-    'Lalapan Usus',
-    'Bakmie Goreng/Kuah',
-    'Tahu Bakso',
-    'Tahu Walik'
-]
+const rows = ref([]);
+const customers = ref([]);
+const menus = ref([]);
 
-const fetchRows = async () => {
-    // Simulate fetching rows, you can adjust based on filters
-    saleStore.totalData = rows.value.length; // Update total count based on actual data
-};
+const getSales = async () => {
+    startProgress();
+    console.log("Sales Data:", saleStore.sales);
 
-// Computed property for filtered rows based on selected customers
-const filteredRows = computed(() => {
-    if (selectedCustomers.value.length === 0) return rows.value;
-    return rows.value.filter(row => selectedCustomers.value.includes(row.customer));
-})
+    await saleStore.getSales()
+    if (saleStore.sales) {
+        finishProgress();
 
-const updatePage = async (page) => {
-    await saleStore.changePage(page);
+        // reformat sales
+        rows.value = saleStore.sales.reduce((acc, sale) => {
+            const { customer_name: customer, date: tanggal, details } = sale;
+
+            const saleRows = details.map(detail => ({
+                id: detail.id,
+                customer,
+                tanggal,
+                menu: detail.product_name,
+                quantity: detail.total_item,
+                price: parseFloat(detail.price).toLocaleString("id-ID", { style: "currency", currency: "IDR" }),
+                total: parseFloat(detail.price * detail.total_item).toLocaleString("id-ID", { style: "currency", currency: "IDR" })
+            }));
+
+            return acc.concat(saleRows);
+        }, []);
+        // console.log("Sales length:", rows.value.length);
+
+    } else {
+        failProgress();
+        menus.value = [];
+    }
 }
 
+const getCustomers = async () => {
+    startProgress();
+    await customerStore.getCustomers();
+
+    if (customerStore.customers) {
+        finishProgress();
+
+        // ekstrak nama customer
+        customers.value = customerStore.customers.map((customer) => ({
+            name: customer.name,
+            id: customer.id
+        })) || [];
+    } else {
+        failProgress();
+        customers.value = [];
+    }
+}
+
+const getProducts = async () => {
+    startProgress();
+    await productStore.getProducts()
+    if (productStore.products) {
+        finishProgress();
+
+        // ekstrak nama menu
+        menus.value = productStore.products.map((product) => ({
+            name: product.name,
+            id: product.id
+        })) || [];
+    } else {
+        failProgress();
+        menus.value = [];
+    }
+}
+
+const updatePage = async (page) => {
+    saleStore.current = page;
+    await getSales();
+};
+
+watch(selectedCustomers, async (newVal) => {
+    saleStore.customerId = newVal.customers;
+    await getSales();
+});
+
+watch(selectedMenus, async (newVal) => {
+    saleStore.productId = newVal.menus;
+    await getSales();
+});
+
+watch(selectedDates, async (newRange) => {
+    if (newRange && newRange.periode && Array.isArray(newRange.periode) && newRange.periode.length === 2) {
+        saleStore.startDate = newRange.periode[0];
+        saleStore.endDate = newRange.periode[1];
+        await getSales();
+    } else {
+        saleStore.startDate = '';
+        saleStore.endDate = '';
+        await getSales();
+    }
+});
+
 onMounted(async () => {
-    await fetchRows();
-})
+    await getSales();
+    await getCustomers();
+    await getProducts();
+});
 </script>

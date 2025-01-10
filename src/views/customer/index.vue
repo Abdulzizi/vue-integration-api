@@ -201,6 +201,7 @@ import { BCard, BCol, BRow } from "bootstrap-vue-next";
 
 
 const customerStore = useCustomerStore();
+
 const rows = ref([]);
 const isOpenForm = ref(false);
 const modalTitle = ref("");
