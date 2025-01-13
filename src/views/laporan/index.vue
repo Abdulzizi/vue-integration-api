@@ -10,7 +10,7 @@
                     <DatesElement mode="range" label="Pilih Tanggal" placeholder="Pilih tanggal" name="dates"
                         @update:modelValue="(val) => { selectedDates.value = val; }" />
                 </Vueform>
-                <pre>{{ selectedDates }}</pre>
+                <!-- <pre>{{ selectedDates }}</pre> -->
             </BCol>
 
             <BCol md="3">
@@ -61,6 +61,10 @@
                     </BTr>
                 </BThead>
                 <BTbody>
+
+                    <BTr v-if="rows.length === 0" class="my-3">
+                        <BTd colspan="7" class="text-center">There is no data with selected filter</BTd>
+                    </BTr>
 
                     <BTr v-for="(sale, index) in rows" :key="sale.id">
                         <BTd>{{ index + 1 }}</BTd>
@@ -191,13 +195,13 @@ watch(selectedMenus, async (newVal) => {
 });
 
 watch(selectedDates, async (newRange) => {
-    if (newRange && newRange.periode && Array.isArray(newRange.periode) && newRange.periode.length === 2) {
-        saleStore.startDate = newRange.periode[0];
-        saleStore.endDate = newRange.periode[1];
+    if (newRange && Array.isArray(newRange.dates) && newRange.dates.length === 2) {
+        saleStore.dateFrom = newRange.dates[0];
+        saleStore.dateTo = newRange.dates[1];
         await getSales();
     } else {
-        saleStore.startDate = '';
-        saleStore.endDate = '';
+        saleStore.dateFrom = '';
+        saleStore.dateTo = '';
         await getSales();
     }
 });
