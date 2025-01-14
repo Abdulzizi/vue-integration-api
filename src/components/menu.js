@@ -68,8 +68,14 @@ export const menuItems = [
     subItems: [
       {
         id: 10,
-        label: "Laporan Sales",
+        label: "Laporan Sales Customer",
         link: "/sales-report",
+        parentId: 6,
+      },
+      {
+        id: 11,
+        label: "Laporan Sales",
+        link: "/report-sales",
         parentId: 6,
       },
     ],

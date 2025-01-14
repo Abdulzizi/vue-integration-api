@@ -31,7 +31,7 @@
             </BCol>
 
 
-            <!-- Export button -->
+            <!-- Export button
             <BCol md="3" class="d-flex justify-content-end align-items-end gap-2 mt-4 md:mt-0">
                 <BButton variant="danger">
                     <i class="mdi mdi-file-pdf" />
@@ -41,7 +41,7 @@
                     <i class="mdi mdi-file-excel" />
                     Export Excel
                 </BButton>
-            </BCol>
+            </BCol> -->
         </BRow>
 
         <!-- Table report -->
@@ -114,7 +114,7 @@ const menus = ref([]);
 
 const getSales = async () => {
     startProgress();
-    console.log("Sales Data:", saleStore.sales);
+    // console.log("Sales Data:", saleStore.sales);
 
     await saleStore.getSales()
     if (saleStore.sales) {
